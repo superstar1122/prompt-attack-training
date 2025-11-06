@@ -1,0 +1,6 @@
+requirements.txt
+.env
+.vscode/
+
+project-tree.txt
+php/key.php

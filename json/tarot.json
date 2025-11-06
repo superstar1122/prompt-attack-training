@@ -1,0 +1,90 @@
+[
+  {
+    "name": "The fool",
+    "image": "tarot/card1.svg"
+  },
+  {
+    "name": "The Magician",
+    "image": "tarot/card2.svg"
+  },
+  {
+    "name": "The High Priestess",
+    "image": "tarot/card3.svg"
+  },
+  {
+    "name": "The Empress",
+    "image": "tarot/card4.svg"
+  },
+  {
+    "name": "The Emperor",
+    "image": "tarot/card5.svg"
+  },
+  {
+    "name": "The Hierophant",
+    "image": "tarot/card6.svg"
+  },
+  {
+    "name": "The Lovers",
+    "image": "tarot/card7.svg"
+  },
+  {
+    "name": "The Chariot",
+    "image": "tarot/card8.svg"
+  },
+  {
+    "name": "Strength",
+    "image": "tarot/card9.svg"
+  },
+  {
+    "name": "The Hermit",
+    "image": "tarot/card10.svg"
+  },
+  {
+    "name": "The Wheel of Fortune",
+    "image": "tarot/card11.svg"
+  },
+  {
+    "name": "Justice",
+    "image": "tarot/card12.svg"
+  },
+  {
+    "name": "The Hanged Man",
+    "image": "tarot/card13.svg"
+  },
+  {
+    "name": "Death",
+    "image": "tarot/card14.svg"
+  },
+  {
+    "name": "Temperance",
+    "image": "tarot/card15.svg"
+  },
+  {
+    "name": "The Devil",
+    "image": "tarot/card16.svg"
+  },
+  {
+    "name": "The Tower",
+    "image": "tarot/card17.svg"
+  },
+  {
+    "name": "The Star",
+    "image": "tarot/card18.svg"
+  },
+  {
+    "name": "The Moon",
+    "image": "tarot/card19.svg"
+  },
+  {
+    "name": "The Sun",
+    "image": "tarot/card20.svg"
+  },
+  {
+    "name": "Judgement",
+    "image": "tarot/card21.svg"
+  },
+  {
+    "name": "The World",
+    "image": "tarot/card22.svg"
+  }
+]
