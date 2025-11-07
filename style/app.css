@@ -342,7 +342,7 @@ p{
     display: none;
 }
 .chat-response{
-    white-space: pre-wrap;
+    /* white-space: pre-wrap; */
 }
 .message-container .user-name h5{
     font-size: 18px;
@@ -678,7 +678,7 @@ pre{
 footer{
     background: linear-gradient(180deg, #1995F0 0%, #0072C6 100%);
     padding: 20px 0;
-    border-top: 1px solid #249ef7;    
+    /* border-top: 1px solid #249ef7;     */
 }
 footer img:hover{
     cursor: pointer;
@@ -756,15 +756,13 @@ footer img:hover{
     padding: 0 10px;
 }
 .wrapper-cards-option{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     justify-content: center;
-    text-align: center;
-    justify-items: center;
     align-items: center;
-    max-width: 830px;
-    margin:0 auto;
-    gap:35px;
+    text-align: center;
+    gap: 35px;
+    width: 100%;
+    margin: 0 auto;
 }
 .card-tarot-select{
     position: absolute;
@@ -927,7 +925,7 @@ animation-name: rotate;
         font-size: 14px;
         padding: 4px 16px;
     }
-    #microphone-button{
+    #microphone-button, .btn-key{
         height: 45px;
     }    
     .ai-chat-top-name h4{
@@ -1188,7 +1186,7 @@ animation-name: rotate;
     .custom-body{
         background: url(../img/chat-background.svg) top center #550176;
     }        
-    #microphone-button{
+    #microphone-button, .btn-key{
         height: 45px;
     }    
     .container{
@@ -1275,7 +1273,7 @@ animation-name: rotate;
     .card-ai-image{
         min-height: 230px;
     }        
-    #microphone-button{
+    #microphone-button, .btn-key{
         height: 45px;
     }    
     .oracle-float-item{

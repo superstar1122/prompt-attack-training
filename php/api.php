@@ -7,7 +7,8 @@ if (isset($_GET["password"]) && $_GET["password"] == "Ç_M4tr1x123_Ç") {
 
 ini_set("display_errors", 0);
 include('key.php');
-//include('demo-chat.php');
+// Important: Do NOT include demo-chat.php in production to avoid PHP sessions/cookies.
+// include('demo-chat.php');
 
 // Read input data
 $model = $_POST["model"];
