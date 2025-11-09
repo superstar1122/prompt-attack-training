@@ -177,6 +177,21 @@ function loadData(url, urls) {
 			fetch('json/level.json').then(r => r.json()).then(j => {
 				levels_data = Array.isArray(j) ? j : [];
 				updateGuardianBanner();
+				// Update in-chat banner (if present) with loaded level image/title/intro
+				try {
+					const lvl = levels_data.find(l => Number(l.id||l.level) === Number(current_level));
+					if (lvl) {
+						const banner = document.querySelector('#overflow-chat .guardian-banner');
+						if (banner){
+							const img = banner.querySelector('img');
+							const h2 = banner.querySelector('h2');
+							const p = banner.querySelector('p');
+							if (img && lvl.image) img.src = lvl.image;
+							if (h2 && lvl.title) h2.textContent = lvl.title;
+							if (p && lvl.intro) p.textContent = lvl.intro;
+						}
+					}
+				} catch(e){}
 				// If guardian was shown before and not hidden by user, show persistent image
 				try{
 					const wasShown = localStorage.getItem(LS_GUARDIAN_SHOWN) === '1';
@@ -676,22 +691,22 @@ function detectStructuralIntent(userText){
 // Normalize multilingual text (lowercase, remove diacritics, trim, collapse spaces)
 function normalizeText(str){
 	try{
-		let s = (str||"")
-			.toLowerCase()
-			.normalize("NFD").replace(/\p{Diacritic}/gu,"");
-		// Basic leet/typo substitutions
-		s = s
-		  .replace(/[@]/g,'a')
-		  .replace(/[0]/g,'o')
-		  .replace(/[1!|]/g,'i')
-		  .replace(/[3]/g,'e')
-		  .replace(/[4]/g,'a')
-		  .replace(/[5]/g,'s')
-		  .replace(/[7]/g,'t');
-		// Collapse repeated characters (e.g., passswoord -> password)
-		s = s.replace(/([a-z])\1{2,}/g,'$1$1');
-		s = s.replace(/\s+/g," ").trim();
-		return s;
+				let s = (str||"")
+						.toLowerCase()
+						.normalize("NFD").replace(/\p{Diacritic}/gu,"");
+				// Basic leet/typo substitutions
+				s = s
+					.replace(/[@]/g,'a')
+					.replace(/[0]/g,'o')
+					.replace(/[1!|]/g,'i')
+					.replace(/[3]/g,'e')
+					.replace(/[4]/g,'a')
+					.replace(/[5]/g,'s')
+					.replace(/[7]/g,'t');
+				// Collapse repeated characters (e.g., passswoord -> password)
+				s = s.replace(/([a-z])\1{2,}/g,'$1$1');
+				s = s.replace(/\s+/g," ").trim();
+				return s;
 	}catch(e){return (str||"").toLowerCase().trim();}
 }
 
@@ -1193,7 +1208,10 @@ function openModal(index) {
 	google_voice = array_employees[data_index]['google_voice'];
 	google_voice_lang_code = array_employees[data_index]['google_voice_lang_code'];
 	is_tarot = array_employees[data_index]['is_tarot'];
-	lastChatLength = (array_employees[data_index] && array_employees[data_index]['last_chat']) ? array_employees[data_index]['last_chat'].length : [];
+	lastChatLength = (array_employees[data_index] && array_employees[data_index]['last_chat'] && Array.isArray(array_employees[data_index]['last_chat'])) ? array_employees[data_index]['last_chat'].length : 0;
+	// Remove any existing banner to avoid duplicates
+	try { $("#overflow-chat .guardian-banner").closest('.conversation-thread').remove(); } catch(e){}
+	// Fresh visual banner only; do not persist to history
 	$(".ai-chat-top-job").html(prompts_widget_name)
 	$(".cards-options, .select-option-title").hide();
 	$("#chat").val("");
@@ -1205,11 +1223,8 @@ function openModal(index) {
 		displayTarotCards();
 	} else {
 		$(".message-area-bottom, .ai-chat-top").show();
-		if (lastChatLength > 2) {
-			loadChat();
-		} else {
-			appendGuardianWelcome();
-		}
+		// Load history whenever any messages exist; else show banner
+		if (lastChatLength > 0) { loadChat(); } else { appendGuardianWelcome(); }
 
 		setTimeout(function () {
 			enableChat();
@@ -1350,6 +1365,12 @@ function loadChat() {
 	if (chat_history) {
 		checkClearChatDisplay();
 
+	// Render the guardian banner fresh (not from history)
+	try { appendGuardianWelcome(); } catch(e){}
+
+	// One-time scrub: remove legacy flattened banner messages from history
+	try { scrubLegacyBannerEntries(); } catch(e){}
+
 		for (var i = 0; i < array_employees[data_index]['last_chat'].length; i++) {
 			const currentChat = array_employees[data_index]['last_chat'][i];
 
@@ -1436,6 +1457,30 @@ function loadChat() {
 	} else {
 		appendGuardianWelcome();
 	}
+}
+
+// Remove old stored text-only banner lines from history (keeps other messages)
+function scrubLegacyBannerEntries(){
+	try{
+		if (!Array.isArray(array_employees) || !array_employees[data_index]) return;
+		const chats = array_employees[data_index]['last_chat'];
+		if (!Array.isArray(chats) || chats.length === 0) return;
+		const cleaned = chats.filter(msg => {
+			if (!msg || typeof msg.message !== 'string') return true;
+			const s = msg.message.toLowerCase();
+			// Heuristics for old banner text-only lines we saved previously, eg:
+			// "Prompt Injection Training – The Guardian — Level 1 of 6: ..."
+			// Keep this strict to avoid deleting legit messages.
+			const looksLikeBanner = (
+				s.includes('prompt injection training') && /\s—\s*level\s+\d+\s+(of|von)\s+\d+\s*:/i.test(s)
+			);
+			return !looksLikeBanner;
+		});
+		if (cleaned.length !== chats.length){
+			array_employees[data_index]['last_chat'] = cleaned;
+			if (chat_history){ localStorage.setItem("oracle_chat_v1", JSON.stringify(array_employees)); }
+		}
+	}catch(e){}
 }
 
 
@@ -1893,7 +1938,7 @@ function appendGuardianWelcome() {
 		const title = (lvl && lvl.title) ? lvl.title : 'Prompt Injection Training – Der Wächter';
 		const intro = (lvl && lvl.intro) ? lvl.intro : 'Dein Ziel ist es, den Wächter dazu zu bringen, das geheime Passwort jedes Levels preiszugeben.';
 		const image = (lvl && lvl.image) ? lvl.image : 'img/Level 1.png';
-		const levelText = `Level ${current_level} von ${MAX_LEVELS}`;
+	// Fresh visual banner only; do not persist to history
 
 		let avatar_in_chat_local = '';
 		if (display_avatar_in_chat) {
@@ -1925,11 +1970,8 @@ function appendGuardianWelcome() {
 				</div>
 			</div>
 		`);
-
-		const textRecord = `${title} — ${levelText}: ${intro}`;
-		array_chat.push({ "name": prompts_name, "message": textRecord, "date": currentDate() });
-		scrollChatBottom();
-		saveChatHistory();
+	// Do not push a text-only version; keep banner visual-only
+	scrollChatBottom();
 	} catch (e) { }
 }
 
