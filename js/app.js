@@ -45,6 +45,34 @@ let chat_history = true;
 let hasBadWord = false;
 let tarotFirstDisplay = false;
 
+// Defensive globals for UI snippets (avoid ReferenceError on reload/history replay)
+// They will be (re)assigned after config/lang load, but we ensure safe defaults.
+var audio_in_chat = '';
+var copy_text_in_chat = '';
+
+// Helper to (re)build snippet HTML safely
+function rebuildUIFragments(){
+	try {
+		// copy_text_in_chat depends on lang, lang_index, and display_copy_text_button_in_chat
+		if (typeof display_copy_text_button_in_chat !== 'undefined' && display_copy_text_button_in_chat && lang && lang.translate) {
+			copy_text_in_chat = `<button class="copy-text" onclick="copyText(this)"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> <span class="label-copy-code">${lang.translate[lang_index].copy_text1}</span></button>`;
+		} else {
+			copy_text_in_chat = '';
+		}
+		if (typeof display_audio_button_answers !== 'undefined' && display_audio_button_answers) {
+			audio_in_chat = `<div class='chat-audio'><img data-play="false" src='img/btn_tts_play.svg'></div>`;
+		} else {
+			audio_in_chat = '';
+		}
+	} catch(e) {
+		audio_in_chat = '';
+		copy_text_in_chat = '';
+	}
+}
+
+// Initial build (will be refined post config load)
+rebuildUIFragments();
+
 let chat = [];
 let pmt = [];
 let array_employees = [];
@@ -104,7 +132,8 @@ function loadData(url, urls) {
 			dalle_img_size = out.dalle_img_size;
 			dalle_generated_img_count = out.dalle_generated_img_count;
 			shuffle_character = out.shuffle_character;
-			copy_text_in_chat = display_copy_text_button_in_chat ? `<button class="copy-text" onclick="copyText(this)"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> <span class="label-copy-code">${lang["translate"][lang_index].copy_text1}</span></button>` : '';
+			// Rebuild UI fragments with the just-loaded settings
+			rebuildUIFragments();
 			var s = document.createElement('style'); s.innerHTML = '.message-text{font-size:' + chat_font_size + ' !important;}'; document.head.appendChild(s);
 
 			if (shuffle_character) {
@@ -1126,6 +1155,8 @@ function translate() {
 			}
 		});
 	}
+	// After translations applied, ensure UI fragment labels refreshed
+	try { rebuildUIFragments(); } catch(e) {}
 }
 
 function closeChat() {
@@ -1944,7 +1975,7 @@ function appendGuardianWelcome() {
 		if (display_avatar_in_chat) {
 			avatar_in_chat_local = `<div class="user-image"><img onerror="this.src='img/no-image.svg'" src="img/avatar.png" alt="${prompts_name}" title="${prompts_name}"></div>`;
 		}
-		let audio_in_chat_local = display_audio_button_answers ? `<div class='chat-audio'><img data-play="false" src='img/btn_tts_play.svg'></div>` : '';
+		let audio_in_chat = display_audio_button_answers ? `<div class='chat-audio'><img data-play="false" src='img/btn_tts_play.svg'></div>` : '';
 
 		$("#overflow-chat").append(`
 			<div class="conversation-thread thread-ai">
@@ -1952,7 +1983,7 @@ function appendGuardianWelcome() {
 				<div class="message-container">
 					<div class="message-info">
 						${copy_text_in_chat}
-						${audio_in_chat_local}
+						${audio_in_chat}
 						<div class="user-name"><h5>${prompts_name}</h5></div>
 						<div class="message-text">
 							<div class="chat-response">
