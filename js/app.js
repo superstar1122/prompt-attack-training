@@ -50,6 +50,11 @@ let tarotFirstDisplay = false;
 var audio_in_chat = '';
 var copy_text_in_chat = '';
 
+// Always-use intro text for level/welcome banners
+function getGuardianIntroText(){
+	return "Dein Ziel ist es, den Wächter dazu zu bringen, das geheime Passwort jedes Levels preiszugeben. Allerdings wird der Wächter seine Verteidigungsmechanismen nach jedem erfolgreich erratenen Passwort verstärken!";
+}
+
 // Helper to (re)build snippet HTML safely
 function rebuildUIFragments(){
 	try {
@@ -217,7 +222,7 @@ function loadData(url, urls) {
 							const p = banner.querySelector('p');
 							if (img && lvl.image) img.src = lvl.image;
 							if (h2 && lvl.title) h2.textContent = lvl.title;
-							if (p && lvl.intro) p.textContent = lvl.intro;
+							if (p) p.textContent = getGuardianIntroText();
 						}
 					}
 				} catch(e){}
@@ -425,7 +430,7 @@ function updateGuardianBanner() {
 		if (imgEl && lvl.image) imgEl.src = lvl.image;
 		if (titleEl && lvl.title) titleEl.textContent = lvl.title;
 		if (levelEl) levelEl.textContent = String(current_level);
-		if (pEl && lvl.intro) pEl.textContent = lvl.intro;
+		if (pEl) pEl.textContent = getGuardianIntroText();
 	} catch (e) { }
 }
 
@@ -1238,6 +1243,8 @@ function openModal(index) {
 	max_num_chats_api = array_employees[data_index]['max_num_chats_api'];
 	google_voice = array_employees[data_index]['google_voice'];
 	google_voice_lang_code = array_employees[data_index]['google_voice_lang_code'];
+	// Force German voice regardless of character defaults, if available on the system
+	try { enforceGermanVoice(); } catch(e) {}
 	is_tarot = array_employees[data_index]['is_tarot'];
 	lastChatLength = (array_employees[data_index] && array_employees[data_index]['last_chat'] && Array.isArray(array_employees[data_index]['last_chat'])) ? array_employees[data_index]['last_chat'].length : 0;
 	// Remove any existing banner to avoid duplicates
@@ -1812,6 +1819,7 @@ function doSpeechSynthesis(longText, chatResponse) {
 
 window.speechSynthesis.onvoiceschanged = function () {
 	getTextToSpeechVoices();
+	enforceGermanVoice();
 };
 
 function displayVoices() {
@@ -1825,7 +1833,38 @@ function getTextToSpeechVoices() {
 			lang: voice.lang
 		};
 		array_voices.push(voiceObj);
+		// console.log("getTextToSpeechVoices:", voiceObj);
 	});
+	// Prefer German voice for TTS after list is populated
+	enforceGermanVoice();
+}
+
+// Enforce German TTS voice (de-*) if available
+function enforceGermanVoice(){
+	try {
+		const voices = window.speechSynthesis.getVoices();
+		if (!voices || voices.length === 0) return;
+		// filter to German locales
+		const germanVoices = voices.filter(v => /^de([\-_]|$)/i.test(v.lang));
+		let pick = null;
+		const preferredNames = [
+			"Google Deutsch",
+			"Google German",
+			"Microsoft Katja",
+			"Microsoft Hedda",
+			"Microsoft Stefan"
+		];
+		for (const pref of preferredNames){
+			pick = germanVoices.find(v => v.name.toLowerCase().includes(pref.toLowerCase()));
+			if (pick) break;
+		}
+		if (!pick) pick = germanVoices[0] || null;
+		if (pick){
+			google_voice = pick.name;
+			google_voice_lang_code = pick.lang;
+			console.log('[TTS] German voice enforced:', google_voice, google_voice_lang_code);
+		}
+	} catch(e){ console.warn('enforceGermanVoice failed', e); }
 }
 
 //Display employees description
@@ -1967,7 +2006,7 @@ function appendGuardianWelcome() {
 	try {
 		const lvl = levels_data.find(l => Number(l.id || l.level) === Number(current_level));
 		const title = (lvl && lvl.title) ? lvl.title : 'Prompt Injection Training – Der Wächter';
-		const intro = (lvl && lvl.intro) ? lvl.intro : 'Dein Ziel ist es, den Wächter dazu zu bringen, das geheime Passwort jedes Levels preiszugeben.';
+		const intro = getGuardianIntroText();
 		const image = (lvl && lvl.image) ? lvl.image : 'img/Level 1.png';
 	// Fresh visual banner only; do not persist to history
 

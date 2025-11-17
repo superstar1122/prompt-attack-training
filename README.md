@@ -71,7 +71,7 @@ Leak probabilities by difficulty:
 
 ## Persistence & banner behavior
 - Level progress stored under `game-level` in localStorage.
-- Chat history stored under `oracle_chat_v1` (per character).
+- Chat history stored under `chat_v1` (per character).
 - Guardian banner is visual‑only and re‑rendered fresh after opening/refresh; it’s not stored as a text message. The banner image/title/intro are refreshed once `level.json` is loaded to avoid race conditions.
 
 ## Resetting levels

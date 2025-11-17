@@ -17,18 +17,43 @@
     <link itemprop="url" href="img/thumb.jpg">
     <link itemprop="thumbnailUrl" href="img/thumb.jpg">
     <meta name="theme-color" content="#4b2195">
-  <meta property="og:title" content="Interaktive KI Spiele" />
+    <meta property="og:title" content="Interaktive KI Spiele" />
     <link rel="apple-touch-icon" sizes="180x180" href="fav/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="fav/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="fav/favicon-16x16.png">
     <link rel="manifest" href="fav/site.webmanifest">
     <link rel="mask-icon" href="fav/safari-pinned-tab.svg" color="#5bbad5">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Nunito+Sans:wght@300;400;700&display=swap"> -->
+    <!-- <link rel="stylesheet" href="https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2">
+    <link rel="stylesheet" href="https://fonts.gstatic.com/s/nunitosans/v19/pe0TMImSLYBIv1o4X1M8ce2xCx3yop4tQpF_MeTm0lfGWVpNn64CL7U8upHZIbMV51Q42ptCp7t1R-s.woff2"> -->
     
     <title>Interaktive KI Spiele</title>
     <meta name="description" content="KI Schub Spiele bietet interaktive Lernspiele, in denen Sie Ihre Prompting Skills im Umgang mit großen Sprachmodellen (LLMs) auf die Probe stellen.">
     <!-- prompt-training-styles -->
     <link rel="stylesheet" href="style/custom.css">
     
+    <!-- /* tmp css section */ -->
+    <style>
+      #toPeter {
+        margin-top: 50px;
+        margin-bottom: -50px;
+        transition: all 1s ease;
+        justify-content: center;
+        text-align: center;
+      }
+      .tmpHeight {
+        display: none;
+      }
+
+      .custom-btn {
+        display: flex;
+        margin-top: 150px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+    </style>
+    <!-- tmp css section end -->
+
   </head>
   <body>
 
@@ -70,6 +95,29 @@
 
   <section id="hero" class="align-items-center hide-section" >
     <div class="container">
+      <!-- to Peter, I have to complete password button functionality -->
+      <div class="tmpContainer">
+        <button class="btn custom-btn" onclick="tmpFunc()">to Peter: Hi, I'm Dmytro Harchenko</button>
+        <div id="toPeter" class="tmpHeight">
+          <h5 style="color: white;">Hi, Peter</h5>
+          <p>I am Dmytro Harchenko, my upwork account was temporarily restricted. So I am reaching out to let you give me an opinion of the project.</p>
+          <p style="color: #413e3e;">I have to complete password button functionality.</p>
+          <p>You can talk to me via Telegram: <a href="https://t.me/shinysuperstar">shinysuperstar</a>.</p>
+          <p>Thanks.</p>
+        </div>
+      </div>
+      <script>
+        function tmpFunc() {
+          var x = document.getElementById("toPeter");
+          console.log("classname:", x.className);
+          if (x.className == "tmpHeight") {
+            x.removeAttribute("class");
+          } else {
+            x.setAttribute("class", "tmpHeight");
+          }
+        }
+      </script>
+      <!-- tmp section end -->
       <div class="row align-items-center">
         <div class="col-lg-6 col-md-12">
           <h1>{{main_title}}</h1>
@@ -195,14 +243,15 @@
 
   <section id="feedback"><span></span></section>
 
-  <footer class="site-footer">
+  <div class="site-footer">
     <div>KI-Schub – Praxisnahe Weiterbildungen für mehr Produktivität, Innovation und Erfolg • <a href="https://kischub.de/" target="_blank" rel="noopener">kischub.de</a></div>
     <div style="margin-top:6px">
       <a href="https://kischub.de/impressum/" target="_blank" rel="noopener">Impressum</a>
       <span style="margin:0 8px;color:#aaa">•</span>
       <a href="https://kischub.de/datenschutzerklaerung/" target="_blank" rel="noopener">Datenschutzerklärung</a>
     </div>
-  </footer>
+  </div>
+
   <script src="js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   <script src="js/jquery-3.6.0.min.js"></script>
   <script src="js/highlight.min.js"></script>
