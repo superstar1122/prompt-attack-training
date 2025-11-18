@@ -12,12 +12,13 @@ font-face {
 .guardian-banner .g-level{font-weight:600;margin-top:2px}
 .guardian-banner p{margin:6px 0 0 0;font-size:14px;color:#444}
 .btn-key{height:60px; margin:0 8px; cursor:pointer; display:inline-block; vertical-align:middle}
-.site-footer{
-  margin-top:32px;padding:16px 12px;text-align:center;color:#666;font-size:12px;
-  background: linear-gradient(180deg, #620872 0%, #d36c5b 100%) !important;
+.site-footer, .contact-container{
+  text-align:center;color: white;
+  font-size:20px;
 }
-.site-footer a{color:inherit;text-decoration:none}
-.site-footer a:hover{text-decoration:underline}
+.site-footer a, .contact-container a{color:inherit;text-decoration:none !important}
+.site-footer {  position: fixed; bottom: 0; width: 100%; padding:16px 12px; padding-top:32px;}
+.contact-container { font-size:14px;}
 
 .cards-one-center{
   display:flex; justify-content:center; align-items:center; gap:20px; flex-wrap:wrap;
@@ -34,3 +35,18 @@ font-face {
 }
 .cards-one-center .game-card .title{ font-weight:700; font-size:18px; }
 .cards-one-center .game-card .sub{ opacity:.9; font-size:13px; }
+
+/* Mobile layout adjustments */
+@media (max-width: 768px){
+  .message-area-bottom{position:fixed;left:0;right:0;bottom:40px;z-index:2000;background:#fff;border-top:1px solid #e2e2e6;box-shadow:0 -2px 6px rgba(0,0,0,.08);height:auto;padding:6px 8px;}
+  .message-area-bottom .chat-input{display:flex;align-items:flex-start;gap:6px;}
+  .message-area-bottom textarea#chat{min-height:46px;max-height:120px;resize:vertical;font-size:15px;padding:6px 8px;width:100%;}
+  .contact-container{position:fixed;left:0;right:0;bottom:0;background:#64008b;color:#fff;padding:8px 10px;font-size:13px;z-index:1999;border-top:1px solid #381862;}
+  .contact-container a{color:#fff !important;font-weight:500;}
+  body.custom-body{padding-bottom:120px;}
+}
+
+/* Hide footer only when a modal is open on mobile/tablet (<= 992px) */
+@media (max-width: 992px){
+  body.modal-open .site-footer{display:none !important;}
+}
