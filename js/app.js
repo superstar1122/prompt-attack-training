@@ -148,7 +148,7 @@ function loadData(url, urls) {
 			// Show only one dashboard card
 			OutC = OutC.slice(0, 1);
 			if (OutC.length > 0) {
-				OutC[0]['widget_name'] = 'KI-Duell: Das Passwort-Orakel';
+				OutC[0]['widget_name'] = 'Wächter (Prompt - Injektion Training)';
 			}
 
 			if (!display_contacts_user_list) {
@@ -1878,6 +1878,13 @@ myModalEl.addEventListener('show.bs.modal', event => {
 		$("#modalDefault .modal-title").html("Über das Spiel");
 		$("#modalDefault .modal-body").html("Prompt-Injektion ist eine Technik, mit der Nutzer KI-Modelle dazu bringen können, Anweisungen zu ignorieren oder unerwartete Informationen preiszugeben. Dieses Spiel zeigt praxisnah, wie solche Angriffe funktionieren – und wie man sie erkennt und verhindert. <br><br><a href='https://kischub.de/kontakt/' target='_blank' rel='noopener'>Kontakt</a>");
 	}
+	// Hide footer while modal is open (all widths for safety)
+	try { document.body.classList.add('footer-hidden'); } catch(e) {}
+})
+
+// Restore footer visibility after modal closes
+myModalEl.addEventListener('hidden.bs.modal', event => {
+	try { document.body.classList.remove('footer-hidden'); } catch(e) {}
 })
 
 // Define the key for the localStorage storage item
